@@ -33,7 +33,7 @@ Usage: `verible-verilog-obfuscate [options] < original > output`
     --seed (Unsigned 64-bit integer seed for repeatable name generation.
       Empty uses random generation.); default: "";
     --token-size, --token_size (Length of newly generated names. 0 preserves
-      original lengths; 1..4096 selects a uniform length.); default: 0;
+      original lengths; 1..64 selects a uniform length.); default: 0;
     --save_map (If provided, save the translation to a dictionary for reuse in a
       future obfuscation with --load_map.); default: "";
 ```
@@ -57,7 +57,8 @@ short lengths. Reuse a shared map for consistent names across separate files.
 The seed is a reproducibility setting, not a cryptographic key.
 
 `--token-size=N` (also accepted as `--token_size=N`) applies to newly generated
-names. Explicit loaded mappings, preserved interface names and preserved
+names and accepts values from 0 through 64. Explicit loaded mappings,
+preserved interface names and preserved
 built-in names take priority and can have different lengths. Macro name lengths
 exclude their leading backtick. Escaped identifiers remain unchanged, as before.
 Whitespace, comments, strings, operators and literals remain unchanged; changing

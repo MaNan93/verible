@@ -77,6 +77,12 @@ def main():
     check('seed_and_size_repeat_bytes', uniform_repeat.returncode == 0 and uniform.stdout == uniform_repeat.stdout)
     underscore = run('underscore_alias', SOURCE, '--seed=123', '--token_size=12')
     check('underscore_alias_matches_hyphen', underscore.returncode == 0 and underscore.stdout == uniform.stdout)
+    largest = run('maximum_token_size', SOURCE, '--seed=123', '--token-size=64', f'--save_map={mapping("maximum_token_size")}')
+    check('maximum_token_size_64_supported', largest.returncode == 0 and all(len(v) == 64 for k, v in read_map('maximum_token_size').items() if k != v))
+    largest_alias = run('maximum_token_size_alias', SOURCE, '--seed=123', '--token_size=64')
+    check('maximum_size_underscore_alias', largest_alias.returncode == 0 and largest_alias.stdout == largest.stdout)
+    largest_decoded = run('maximum_token_size_decode', largest.stdout, '--decode', f'--load_map={mapping("maximum_token_size")}')
+    check('maximum_token_size_roundtrip', largest_decoded.returncode == 0 and largest_decoded.stdout == SOURCE)
     random_uniform = run('random_uniform', SOURCE, '--token-size=12', f'--save_map={mapping("random_uniform")}')
     check('token_size_without_seed', random_uniform.returncode == 0 and all(len(v) == 12 for k, v in read_map('random_uniform').items() if k != v))
     decode = run('decode', uniform.stdout, '--decode', f'--load_map={mapping("uniform")}')
@@ -114,7 +120,8 @@ def main():
 
     for label, flags in (
         ('negative_size', ['--token-size=-1']),
-        ('excessive_size', ['--token-size=4097']),
+        ('excessive_size', ['--token-size=65']),
+        ('excessive_size_underscore', ['--token_size=65']),
         ('invalid_seed', ['--seed=abc']),
         ('negative_seed', ['--seed=-1']),
         ('overflow_seed', ['--seed=18446744073709551616']),

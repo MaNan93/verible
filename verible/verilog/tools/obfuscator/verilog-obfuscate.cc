@@ -54,7 +54,7 @@ ABSL_FLAG(std::string, seed, "",
           "across separately processed files.");
 ABSL_FLAG(int, token_size, 0,
           "Length of newly generated names (also spelled --token-size). "
-          "0 preserves original lengths; 1..4096 selects a uniform length. "
+          "0 preserves original lengths; 1..64 selects a uniform length. "
           "Loaded mappings and preserved names take priority.");
 
 ABSL_FLAG(                      //
@@ -117,8 +117,8 @@ Output is written to stdout.
   const auto args = verible::InitCommandLine(usage, &argc, &argv);
 
   const int token_size = absl::GetFlag(FLAGS_token_size);
-  if (token_size < 0 || token_size > 4096) {
-    std::cerr << "--token-size must be between 0 and 4096.\n";
+  if (token_size < 0 || token_size > 64) {
+    std::cerr << "--token-size must be between 0 and 64.\n";
     return 1;
   }
   const auto seed_text = absl::GetFlag(FLAGS_seed);
